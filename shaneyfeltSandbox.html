@@ -1,0 +1,155 @@
+<html>
+  <head>
+    <meta charset="UTF-8" /> 
+    <title> Dr. Shaneyfelt's Shaka HTML Page </title>
+	<script>
+	    var writing=true;
+	</script>
+	<script>
+	function simplify(x) {
+	    var doc = new DOMParser().parseFromString(x, 'text/html');
+		doc.documentElement.removeAttribute("contenteditable");
+		doc.documentElement.removeAttribute("onkeyup");
+		var str = new XMLSerializer().serializeToString(doc);
+		str = str.replace(/<(script|style|textarea)[^]*?>([^]*?[^]*?)<\/\1>/gimu,function(s){
+		    s=s.replace("textarea","XtextareaX") // kludge upon kludge
+			var t = doc.createElement("textarea"); // kludge to
+            t.innerHTML = s;                       // replace entities
+            s=t.value;                             // with characters 
+		    s=s.replace("XtextareaX","textarea") // kludge upon kludge
+		    return s;
+		});
+
+
+	    return "<!DOCTYPE html>\n"+str;
+	}
+	</script>
+	<script>
+	function editable()
+	{
+	    attribval = 'parent.document.getElementById("ta").value = parent.window.simplify(this.outerHTML);parent.window.updateLink()';
+		attribs = ' contenteditable=\'true\' onkeyup=\''+attribval+'\'';
+		tag = '<html '+attribs+'>\n';
+		return tag;
+	}
+	</script>
+	<script>
+	function getcode()
+	{
+	    return document.getElementById("ta").value;
+	}
+	</script>
+    <script>
+	function updateLink() {
+	    document.getElementById("dnld").href = "data:text/html," + 
+	    encodeURIComponent(document.getElementById("ta").value);
+	}
+	</script>
+    <script>
+    function go()
+    {	
+       { let n = setInterval('let',1000); while (n) clearInterval(n--); } 
+       document.cookie = getcode();
+       w = window.open("","targ","");
+       w.document.open();
+	   if (writing) w.document.write(editable()+getcode());
+	   else w.document.write("<html>"+getcode());
+       w.document.close();
+	   document.getElementById("title").innerHTML = w.document.title;
+	   updateLink();
+       window.focus(); // Chrome needs focus on window then document to keep focus from moving to the opened 
+	   if (document.focus) document.focus();
+	}
+    </script>
+	<script>
+	function pendown() {
+	    document.getElementById("wr").style.visibility = "visible"
+		alert(foo)
+	}
+	</script>
+	<script>
+	function pen() {
+	    if (writing) {
+		   writing=false;
+           document.getElementById("wr").style.visibility = "hidden"; 
+		} else {
+		   writing=true;
+    	   document.getElementById("wr").style.visibility = "visible";
+		}
+		go();
+	}
+	</script>
+	<style>
+	#titlebar { 
+		background:blue;
+		color:white;
+		font-weight:bold;
+	}
+    .nav {
+        background:darkslategray;
+		padding-left:1em;
+	 }
+    button div {
+	    line-height: 1em;
+		height:1em;width:1em;
+
+	 }
+    button {
+    	width:2.5em;
+		height:2em;
+		border-radius:4pt;
+		margin:.2ex;
+		border-width:3pt;
+	}
+	.pen div {
+	  transform:scale(1.5)translate(-.1em,-.1em)
+	}
+	#ta {
+	  height:100%;width:100%;
+	}
+	body {margin:0}
+	</style>
+  </head>
+  <body onkeyup='go()' onload='go()'>
+    <div id="frame" style="display:flex;flex-direction:row">
+      <div style='border:5pt ridge blue;flex:1 1 60%; display:flex;flex-direction:column;'>
+	    <div id='titlebar' onclick="pen()">&#x1F919; 
+		    <span id='title' style=''>TITLE</span>
+			<div style='float:right;visibility:visible' id='wr'>Editable 
+			  <span style='font-size:2em;line-height:0pt;position:relative;top:.2em'>&#x270D;</span>
+			</div>
+		</div>
+        <iframe name="targ" style='height:100%;width:100%;background:white' selected="false"></iframe>
+	  </div>
+	<div style='flex:1 1 100%'>
+      <div class="nav">
+      <button type="button" onclick='document.getElementById("frame").style.flexDirection="column";'>
+        <div style="transform:rotate(90deg)">?</div>
+      </button>
+      <button type="button" onclick='document.getElementById("frame").style.flexDirection="row";'>
+        <div>?</div>
+      </button>
+      <a id="dnld" href='#' download='aloha.html'>
+        <button type="button"><div style="transform:scale(2.5,1.25)">&#x2B73;<!--x2B73 dnld--></div></button>
+      </a>
+    </div>
+
+  	  <form>
+          <textarea id='ta' rows='200'><!DOCTYPE html>
+<html><head>
+  <title></title>
+  <style> 
+  </style>
+  <script>  
+  </script>
+</head><body>
+  <h1></h1>
+  <p></p>
+</body></html>
+          </textarea>
+        </form>
+	  </div>
+    </div>
+  </body>
+</html>
+
